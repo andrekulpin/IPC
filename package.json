@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/andrekulpin/IPC/issues"
   },
-  "homepage": "https://github.com/andrekulpin/IPC#readme"
+  "homepage": "https://github.com/andrekulpin/IPC#readme",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "co": "^4.6.0",
+    "is-json": "^2.0.1",
+    "uuid-v4": "^0.1.0"
+  }
 }

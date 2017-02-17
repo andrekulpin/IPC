@@ -1,5 +1,7 @@
 const uuid = require('uuid-v4');
 const isJson = require('is-json');
+const assert = require('assert');
+const co = require('co');
 
 function IPC( process ){
 	this.stdout = process.stdout;
@@ -18,10 +20,8 @@ IPC.prototype.register = function( name, handler ){
 				let id = json['id'];
 				let callback = this.calls[ id ];
 				if( callback ){
-
+					return callback();
 				}
-				
-				json['id']
 			}
 		}
 		
@@ -42,11 +42,30 @@ IPC.prototype.send = function( method, params, callback ){
 
 
 IPC.prototype.__registerCall = function( id, callback ){
-	this.calls[ id ] = callback || true;
+	this.calls[ id ] = callback || false;
 }
 
-module.exports = function(){
-
-
-
+function isGenerator( obj ){
+	const constructor = obj.constructor;
+	if( !constructor ) return false;
+	return 'GeneratorFunction' === constructor.name
 }
+
+co(function * (){
+
+	var boy = yield (function * (boy){
+		yield 
+		return boy
+	})('sdsds');
+	console.log(boy)
+
+})
+.catch(function(err){
+	console.log(err)
+})
+
+/*module.exports = function( process ){
+	assert( process );
+	return new IPC( process );
+}
+*/
