@@ -20,7 +20,7 @@ IPC.prototype.init = function(){
 		self.listener = self.process.stdout;
 	}
 	var handler = co.wrap(function * ( message ){
-		let json = getJSON( message );
+		let json = utils.getJSON( message );
 		if( !json ) return;
 		let { id, result, error } = json;
 		if( result || error ){
@@ -33,7 +33,7 @@ IPC.prototype.init = function(){
 		let method = self.methods[ name ];
 		if( method ){
 			let { res, err } = yield utils.callFunction( method, params );
-			self.emitResponse(id, res, err);
+			__emitResponse.call( this, id, res, err );
 		}
 	});
 	self.listener.on('data', handler);
@@ -45,13 +45,7 @@ IPC.prototype.on = function( name, handler ){
 }
 
 IPC.prototype.emitResponse = function( id, result, error ){
-	var message = JSON.stringify({
-		ipc: '1.0',
-		id: id,
-		result: result,
-		error: error
-	});
-	this.emitter.write( message );
+
 }
 
 IPC.prototype.emit = function( method, ...args ){
@@ -70,12 +64,21 @@ IPC.prototype.emit = function( method, ...args ){
 		method: method,
 		params: params
 	});
-	id && this.__registerCall( id, callback );
+	id && __registerCall.call( this, id, callback );
 	this.emitter.write( message );
 }
 
+function __emitResponse( id, result, error ){
+	var message = JSON.stringify({
+		ipc: '1.0',
+		id: id,
+		result: result,
+		error: error
+	});
+	this.emitter.write( message );
+}
 
-IPC.prototype.__registerCall = function( id, callback ){
+function __registerCall( id, callback  ){
 	this.calls[ id ] = callback;
 }
 
