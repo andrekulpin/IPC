@@ -1,7 +1,6 @@
 const uuid = require('uuid-v4');
 const isJson = require('is-json');
 const utils = require('./lib/utils');
-const _ = require('lodash');
 const co = require('co');
 
 function IPC( proc ){
