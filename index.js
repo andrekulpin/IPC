@@ -1,11 +1,9 @@
 const uuid = require('uuid-v4');
-const isJson = require('is-json');
 const utils = require('./lib/utils');
 const co = require('co');
 
 function IPC( proc ){
 	if(!(this instanceof IPC)) return new IPC( proc );
-	EventEmitter.call( this );//delete
 	this.process = proc;
 	this.emitter = proc.stdout;
 	this.listener = proc.stdin;
@@ -26,14 +24,14 @@ IPC.prototype.init = function(){
 		if( result || error ){
 			let callback = self.calls[ id ];
 			if( callback ){
-				return yield utils.callFunction( callback );
+				return yield utils.callFunction( callback, error, result );
 			}
 		}
 		let { method: name, params } = json;
 		let method = self.methods[ name ];
 		if( method ){
 			let { res, err } = yield utils.callFunction( method, params );
-			__emitResponse.call( this, id, res, err );
+			__emitResponse.call( self, id, res, err );
 		}
 	});
 	self.listener.on('data', handler);
@@ -52,7 +50,7 @@ IPC.prototype.emit = function( method, ...args ){
 	let callback;
 	let params;
 	if(args.length){
-		callback = args[args.length - 1] === typeof 'function'
+		callback = typeof args[args.length - 1] === 'function'
 			? args.pop() 
 			: void 0;
 		params = args;
