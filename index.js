@@ -42,6 +42,14 @@ IPC.prototype.on = function( name, handler ){
 	this.methods[ name ] = handler;
 }
 
+IPC.prototype.once = function( name, handler ){
+	const self = this;
+	this.methods[ name ] = function*( ...args ){
+		delete self.methods[ name ];
+		return yield handler( ...args );
+	};
+}
+
 IPC.prototype.emitResponse = function( id, result, error ){
 
 }
