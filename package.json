@@ -1,5 +1,5 @@
 {
-  "name": "node-ipc",
+  "name": "ipc-json",
   "version": "1.0.0",
   "description": "Node IPC module for Inter Process Communication",
   "main": "index.js",
