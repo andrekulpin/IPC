@@ -1,6 +1,7 @@
 const uuid = require('uuid-v4');
 const utils = require('./lib/utils');
 const co = require('co');
+const carrier = require('carrier');
 
 function IPC( proc ){
 	if(!(this instanceof IPC)) return new IPC( proc );
@@ -34,7 +35,7 @@ IPC.prototype.init = function(){
 			__emitResponse.call( self, id, res, err );
 		}
 	});
-	self.listener.on('data', handler);
+	carrier.carry( self.listener, handler );
 	return this;
 }
 
@@ -71,7 +72,7 @@ IPC.prototype.emit = function( method, ...args ){
 		params: params
 	});
 	id && __registerCall.call( this, id, callback );
-	this.emitter.write( message );
+	this.emitter.write( message + '\n' );
 }
 
 function __emitResponse( id, result, error ){
